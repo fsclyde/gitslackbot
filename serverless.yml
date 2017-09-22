@@ -23,6 +23,16 @@ functions:
           - KMS:Decrypt
           - KMS:GenerateDataKey
         Resource: arn:aws:kms:${file(properties.yml):aws_region}:${file(properties.yml):aws_accountid}:key/${file(properties.yml):kms_key_id}
+      - Effect: Allow
+        Action: # Gives permission to DynamoDB tables in a specific region
+          - dynamodb:DescribeTable
+          - dynamodb:Query
+          - dynamodb:Scan
+          - dynamodb:GetItem
+          - dynamodb:PutItem
+          - dynamodb:UpdateItem
+          - dynamodb:DeleteItem
+        Resource: arn:aws:dynamodb:${file(properties.yml):aws_region}:*:table/githubCreateRepo
     environment:
       USERNAME: ${file(properties.yml):username}
       PASSWORD: ${file(properties.yml):password}
@@ -48,11 +58,7 @@ functions:
             template: $input.path('$')
           cors: true
 
-#############################################################
-
-# Function Github repository creation
-functions:
-  nwGithubCreateRepo:
+  nwAppGitCreate:
     handler: approve_repo.lambda_handler
     name: nwGithubCreateRepo
 #    description: automatically create github repository
@@ -65,6 +71,16 @@ functions:
           - KMS:Decrypt
           - KMS:GenerateDataKey
         Resource: arn:aws:kms:${file(properties.yml):aws_region}:${file(properties.yml):aws_accountid}:key/${file(properties.yml):kms_key_id}
+      - Effect: Allow
+        Action: # Gives permission to DynamoDB tables in a specific region
+          - dynamodb:DescribeTable
+          - dynamodb:Query
+          - dynamodb:Scan
+          - dynamodb:GetItem
+          - dynamodb:PutItem
+          - dynamodb:UpdateItem
+          - dynamodb:DeleteItem
+        Resource: arn:aws:dynamodb:${file(properties.yml):aws_region}:*:table/githubCreateRepo
     environment:
       USERNAME: ${file(properties.yml):username}
       PASSWORD: ${file(properties.yml):password}
@@ -81,8 +97,8 @@ functions:
         - ${file(properties.yml):aws-lambda-subnet2}
     events:
       - http:
-          path: api/nwGithubCreate
-          method: get
+          path: api/nwGithubApprove
+          method: post
           integration: lambda
           response:
             headers:

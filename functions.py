@@ -6,7 +6,8 @@ __author__ = "Clyde Fondop"
 import datetime, json, string
 import requests, os
 from requests.auth import HTTPBasicAuth
-import config, sys,re
+import config, sys,re, boto3, base64
+kms = boto3.client('kms')
 
 class functionRepo:
 
@@ -92,15 +93,24 @@ class functionRepo:
         return team_id
 
     # Check body for slack event
-    def checkbody(self, event):
-
+    def checkBody(self, event):
+        status_code = 200
+        message = {}
         try:
             event_body = event['body']
         except KeyError:
             status_code = 500
-            message = 'internal error can\'t load the body'
+            message["status"] = 'internal error can\'t load the body'
         except TypeError:
             status_code = 500
-            message = 'internal error can\'t load the body'
+            message["status"] = 'internal error can\'t load the body'
 
         return status_code, message, event_body
+
+    # Kms encrypt data
+    def kmsEncryptData(self,data):
+        encrypted = ""
+        encrypt = kms.encrypt(Plaintext=data)
+        encrypted = base64.b64encode(encrypt['CiphertextBlob']).decode("utf-8")
+
+        return encrypted
