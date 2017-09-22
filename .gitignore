@@ -87,3 +87,23 @@ ENV/
 
 # Rope project settings
 .ropeproject
+/certifi/
+/slacker/
+/slacker-0.9.60.dist-info/
+/requests/
+/slackclient-1.0.9.dist-info/
+/slackbot-0.5.1.dist-info/
+/slackclient/
+/six-1.11.0.dist-info/
+/idna-2.6.dist-info/
+/chardet/
+/requests-2.18.4.dist-info/
+/urllib3-1.22.dist-info/
+/node_modules/
+/urllib3/
+/websocket_client-0.44.0.dist-info/
+/chardet-3.0.4.dist-info/
+/idna/
+/websocket/
+/certifi-2017.7.27.1.dist-info/
+/slackbot/

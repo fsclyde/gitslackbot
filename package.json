@@ -1,0 +1,29 @@
+{
+  "name": "github-repo-autocreate",
+  "version": "1.0.0",
+  "description": "This repository allow automatic creation of github repo",
+  "main": "slackbot.py",
+  "scripts": {
+    "test": "python slackbot.py"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/fsclyde/github-repo-autocreate.git"
+  },
+  "keywords": [
+    "github",
+    "devops",
+    "security"
+  ],
+  "author": "Clyde Fondop",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/fsclyde/github-repo-autocreate/issues"
+  },
+  "homepage": "https://github.com/fsclyde/github-repo-autocreate#readme",
+  "devDependencies": {
+    "serverless-crypt": "0.0.3",
+    "serverless-kms-secrets": "1.0.2",
+    "serverless-plugin-write-env-vars": "1.0.1"
+  }
+}

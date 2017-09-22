@@ -1,0 +1,91 @@
+service: nwGithubCreateRepo
+
+# you can overwrite defaults here
+stage: ${self:provider.stage}
+region: ${self:provider.region}
+
+provider:
+  name: aws
+  runtime: python2.7
+
+# Function Github request approval
+functions:
+  nwReqApp:
+    handler: request_repo.lambda_handler
+    name: nwReqApp
+#    description: automatically create github repository
+    runtime: python2.7
+    memorySize: 1024
+    timeout: 180
+    iamRoleStatements:
+      - Effect: Allow
+        Action:
+          - KMS:Decrypt
+          - KMS:GenerateDataKey
+        Resource: arn:aws:kms:${file(properties.yml):aws_region}:${file(properties.yml):aws_accountid}:key/${file(properties.yml):kms_key_id}
+    environment:
+      USERNAME: ${file(properties.yml):username}
+      PASSWORD: ${file(properties.yml):password}
+      ENC_EXPECTED_TOKEN: ${file(properties.yml):env_expected_token}
+      API_TOKEN: ${file(properties.yml):api_token}
+
+    region: ${file(properties.yml):aws_region}
+    awsKmsKeyArn: arn:aws:kms:${file(properties.yml):aws_region}:${file(properties.yml):aws_accountid}:key/${file(properties.yml):kms_key_id}
+    vpc:
+      securityGroupIds:
+        - ${file(properties.yml):aws-lambda-sg}
+      subnetIds:
+        - ${file(properties.yml):aws-lambda-subnet1}
+        - ${file(properties.yml):aws-lambda-subnet2}
+    events:
+      - http:
+          path: api/nwGithubCreate
+          method: post
+          integration: lambda
+          response:
+            headers:
+              Content-Type: "'text/html'"
+            template: $input.path('$')
+          cors: true
+
+#############################################################
+
+# Function Github repository creation
+functions:
+  nwGithubCreateRepo:
+    handler: approve_repo.lambda_handler
+    name: nwGithubCreateRepo
+#    description: automatically create github repository
+    runtime: python2.7
+    memorySize: 1024
+    timeout: 180
+    iamRoleStatements:
+      - Effect: Allow
+        Action:
+          - KMS:Decrypt
+          - KMS:GenerateDataKey
+        Resource: arn:aws:kms:${file(properties.yml):aws_region}:${file(properties.yml):aws_accountid}:key/${file(properties.yml):kms_key_id}
+    environment:
+      USERNAME: ${file(properties.yml):username}
+      PASSWORD: ${file(properties.yml):password}
+      ENC_EXPECTED_TOKEN: ${file(properties.yml):env_expected_token}
+      API_TOKEN: ${file(properties.yml):api_token}
+
+    region: ${file(properties.yml):aws_region}
+    awsKmsKeyArn: arn:aws:kms:${file(properties.yml):aws_region}:${file(properties.yml):aws_accountid}:key/${file(properties.yml):kms_key_id}
+    vpc:
+      securityGroupIds:
+        - ${file(properties.yml):aws-lambda-sg}
+      subnetIds:
+        - ${file(properties.yml):aws-lambda-subnet1}
+        - ${file(properties.yml):aws-lambda-subnet2}
+    events:
+      - http:
+          path: api/nwGithubCreate
+          method: get
+          integration: lambda
+          response:
+            headers:
+              Content-Type: "'text/html'"
+            template: $input.path('$')
+          cors: true
