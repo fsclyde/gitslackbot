@@ -8,6 +8,7 @@ Python script which creates github repo for security automation.
 * To have slack and a Github
 
 This will send a message for approval to the Channel #githubot
+
 This channel can be changed in the configurations files.
 
 ### USAGE

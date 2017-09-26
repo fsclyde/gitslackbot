@@ -104,6 +104,7 @@ def lambda_handler(event, context):
         # Check slack token
         if token != config.EXPECTED_TOKEN:
             message["status"] = "Request token {} does not match expected".format(token)
+            return message["status"]
         else:
             user = event_body['user_name']
             command_text = event_body['text']
@@ -112,7 +113,7 @@ def lambda_handler(event, context):
         message, checkstatus, data  = myManageBot.checkParam(command_text)
         if checkstatus == 0:
 
-            # send information to the SQS queue
+            # send information to dynamoDB
             message_id = myManageBot.randomGenerator(size=15)
             myManageBot.sendDBMessage({"message_id":message_id,"slack_user":user,"message_status":"waiting_approval","data":data})
 
