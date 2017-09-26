@@ -58,8 +58,8 @@ class manageBot:
             test = 1
 
         if test == 0:
-            if len(data) != 3:
-                message["status"] = "exactly 3 parameters are required: Repo Name, Description, Repo team name"
+            if len(data) != 2:
+                message["status"] = "exactly 2 parameters are required (Those need to be separated by space): RepoName TeamName\nAvailable teams: `{}` \nExample: /gitrequestrepo nw-watchlist developer \n".format(config.GIT_TEAMS)
                 test = 1
 
         if test == 0:
@@ -69,14 +69,11 @@ class manageBot:
 
         if test == 0:
             response = self.table.scan()
-            if response:
-                try:
-                    items = response["Items"][0]
-                    repo = items["data"][0]
-                    message_id = items["message_id"]
-                    message["status"] = "Sorry wait until this request gets approved:\n repo=> {}\n message_id=>{} ".format(repo,message_id)
-                except KeyError or TypeError:
-                    message["status"] = "There is already a request for repository creation"
+            if response["Items"]:
+                items = response["Items"][0]
+                repo = items["data"][0]
+                message_id = items["message_id"]
+                message["status"] = "Sorry wait until this request gets approved:\n repo=> {}\n message_id=>{} ".format(repo,message_id)
                 test = 1
 
 
@@ -119,7 +116,7 @@ def lambda_handler(event, context):
             message_id = myManageBot.randomGenerator(size=15)
             myManageBot.sendDBMessage({"message_id":message_id,"slack_user":user,"status":"waiting_approval","data":data})
 
-            config.SLACK_APPROVAL.append({"title":"repository creation","text":"requestor=> {}\n repo_name=> {}\n repo_team=> {}\n message_id=> {}".format(user,data[0],data[2],message_id)})
+            config.SLACK_APPROVAL.append({"title":"repository creation","text":"requestor=> {}\n repo_name=> {}\n repo_team=> {}\n message_id=> {}".format(user,data[0],data[1],message_id)})
             config.SLACK_APPROVAL.append({"callback_id": "git_repo_`{}`".format(message_id)})
             slack.chat.post_message(config.SLACK_CHANNEL,text="Would you like to approve this request?", attachments=config.SLACK_APPROVAL,username="slackbot")
             message["status"] = "Request submitted for approval for the repo {} ".format(data[0])

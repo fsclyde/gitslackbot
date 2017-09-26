@@ -12,8 +12,10 @@ Python script which creates github repo for security automation.
 ###### Slack Parameters
 
 * repo_name: mandatory should start by "nw-"
-* description: mandatory
 * repo_team_name: mandatory
+
+-----------------------------------
+
 * repo_team_read: optional
 * repo_team_write: optional
 * ssh_key_title: optional
@@ -23,9 +25,9 @@ At least 6 parameters are required. Maximum 8 parameters.
 
 1) Here is the configuration of the slackbot for auto repository creation
 
-    ```/creategitrepo [repo_name] [description] [repo_team_name]```
+    ``/creategitrepo [repo_name] [repo_team_name]``
 
 
 2) Here is the exemple for approving a creation of repository
 
-    ```/gitapprove [message_id] [repo_team_read] [repo_team_write] [ssh_key_title] [ssh_key]```
+    ``/gitapprove [message_id] [repo_team_read] [repo_team_write] [ssh_key_title] [ssh_key]``

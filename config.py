@@ -8,9 +8,9 @@ kms = boto3.client('kms')
 USERNAME = kms.decrypt(CiphertextBlob=b64decode(os.environ["USERNAME"]))['Plaintext']
 PASSWORD = kms.decrypt(CiphertextBlob=b64decode(os.environ["PASSWORD"]))['Plaintext']
 
-# GITHUB_API_URL = "http://github.nw.adesa.com/api/v3/{}"
-GITHUB_API_URL = "https://api.github.com/{}"
-GITHUB_ORGANISATION = "fsbaseorga"
+GITHUB_API_URL = "http://github.nw.adesa.com/api/v3/{}"
+# GITHUB_API_URL = "https://api.github.com/{}"
+GITHUB_ORGANISATION = "sandbox"
 
 # Slack parameters
 SLACK_CHANNEL = "#githubot"
@@ -19,8 +19,12 @@ API_TOKEN = kms.decrypt(CiphertextBlob=b64decode(os.environ["API_TOKEN"]))['Plai
 
 SLACK_APPROVAL = [{
                     "title": "Approve a request using",
-                    "text": "/gitapprove [message_id]"
+                    "text": "/gitapprove [message_id] [teamSRead] [teamSWrite]"
                 }]
+
+TABLE = "githubCreateRepo"
+# GIT_TEAMS = "tesla,ronin,defcon,bb-8,falcon,transformers,readonly"
+GIT_TEAMS = "developer,readonly,devops"
 # SLACK_APPROVAL = [{
 #                     "fallback": "You are unable to choose an answer",
 #                     "color": "#3AA3E3",

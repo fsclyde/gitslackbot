@@ -14,9 +14,10 @@ class manageRepo(functionRepo,protectRepo):
     def __init__(self):
         functionRepo.__init__(self)
         protectRepo.__init__(self)
+        self.message_repo = ""
 
     # Create repository
-    def createRepo(self, data, user, channel):
+    def createRepo(self, data, channel, slack_requestor, slack_approver):
 
         # get secure configuration from definition script
         data.update(self.getRepoCustomParam())
@@ -26,11 +27,14 @@ class manageRepo(functionRepo,protectRepo):
 
         if self.status_message["http_status"] in [200,201]:
             self.status_message["uid_repo"] = uuid.uuid4()
-        self.status_message["slack_user"] = user
+        self.status_message["slack_requestor"] = slack_requestor
+        self.status_message["slack_approver"] = slack_approver
         self.status_message["slack_channel"] = channel
+        self.message_repo = self.status_message["message"]
+        # information to send to slack
+        self.slack_info = self.status_message
         self.logging()
-        if self.status_message["http_status"] in [200,201]:
-            del self.status_message["uid_repo"]
+
 
         return self.status_message
 
@@ -56,5 +60,9 @@ class manageRepo(functionRepo,protectRepo):
         self.status_message["organisation_name"] = config.GITHUB_ORGANISATION
         self.status_message["repo_name"] = repo
 
+    # Return information for slack user
+    def sendSlackInfo(self):
+        str_slack_info = "Action: Repository creation\nRepository Name: {}\nStatus: {}\nRequestor: {} \nApprover: {} \n"\
+            .format(self.status_message["repo_name"],self.message_repo,self.status_message["slack_requestor"],self.status_message["slack_approver"],self.status_message["slack_approver"])
 
-
+        return str_slack_info

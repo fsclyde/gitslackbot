@@ -15,8 +15,10 @@ class functionRepo:
     def __init__(self):
         self.message = []
         self.status_message = {}
-        self.slack_user = ""
+        self.slack_requestor = ""
+        self.slack_approver = ""
         self.slack_channel = ""
+        self.slack_info = {}
         self.headers = {'Content-Type': 'application/json','Accept':'application/vnd.github.loki-preview+json'}
 
     # Make get request
@@ -84,7 +86,6 @@ class functionRepo:
         res = self.githubGetRequest('orgs/{}/teams'.format(config.GITHUB_ORGANISATION))
         json_res = self.getContent(res)
 
-
         # Read json and extract the team ID
         for item in json_res:
             if re.search(item["name"], team_name, re.IGNORECASE):
@@ -95,13 +96,11 @@ class functionRepo:
     # Check body for slack event
     def checkBody(self, event):
         status_code = 200
-        message = {}
+        message = event_body = {}
+        message["status"] = ""
         try:
             event_body = event['body']
-        except KeyError:
-            status_code = 500
-            message["status"] = 'internal error can\'t load the body'
-        except TypeError:
+        except KeyError or TypeError or IndexError:
             status_code = 500
             message["status"] = 'internal error can\'t load the body'
 
@@ -114,3 +113,4 @@ class functionRepo:
         encrypted = base64.b64encode(encrypt['CiphertextBlob']).decode("utf-8")
 
         return encrypted
+
