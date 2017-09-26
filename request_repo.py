@@ -114,7 +114,7 @@ def lambda_handler(event, context):
 
             # send information to the SQS queue
             message_id = myManageBot.randomGenerator(size=15)
-            myManageBot.sendDBMessage({"message_id":message_id,"slack_user":user,"status":"waiting_approval","data":data})
+            myManageBot.sendDBMessage({"message_id":message_id,"slack_user":user,"message_status":"waiting_approval","data":data})
 
             config.SLACK_APPROVAL.append({"title":"repository creation","text":"requestor=> {}\n repo_name=> {}\n repo_team=> {}\n message_id=> {}".format(user,data[0],data[1],message_id)})
             config.SLACK_APPROVAL.append({"callback_id": "git_repo_`{}`".format(message_id)})

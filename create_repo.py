@@ -31,6 +31,7 @@ import config
 resource = boto3.resource('dynamodb')
 slack = Slacker(config.API_TOKEN)
 myfunctionRepo = functionRepo()
+table = resource.Table(config.TABLE)
 
 
 # return repository and team configurations
@@ -48,6 +49,7 @@ def getOpionnalParamerters(param):
 
     return env_key
 
+
 # Get the context of each repo
 def createRepository(event,context):
     ENV_KEY = ""
@@ -58,6 +60,7 @@ def createRepository(event,context):
     except KeyError:
         message = "Error in the inputs parameters"
         test = 1
+
 
     if test == 0:
         params = event
@@ -99,7 +102,6 @@ def createRepository(event,context):
         # Send information to Slack channel
         slack.chat.post_message(config.SLACK_CHANNEL, text=myManageRepo.sendSlackInfo(), username="slackbot")
 
-        table = resource.Table(config.TABLE)
         table.delete_item(
             Key={
                 'message_id':params["message_id"]
@@ -107,21 +109,3 @@ def createRepository(event,context):
         )
 
     return message
-
-
-# if __name__ == "__main__":
-#     event = context = {}
-#     event = {
-#             "repo_name":"nw-test",
-#             "repo_description":"tototo",
-#             "repo_team":"read-only",
-#             "repo_teams_read":"devOps",
-#             "repo_teams_write":"read-only",
-#             "approver":"ok",
-#             "requestor":"test",
-#             "channel":"ok",
-#             "ssh_title": "test",
-#             "ssh_key": "test"
-#         }
-#
-#     createRepository(event)

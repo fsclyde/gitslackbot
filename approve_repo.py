@@ -10,7 +10,6 @@ from slacker import Slacker
 import random
 from boto3.dynamodb.conditions import Key
 
-
 kms = boto3.client('kms')
 resource = boto3.resource('dynamodb')
 client   = boto3.client('dynamodb')
@@ -22,6 +21,7 @@ logger.setLevel(logging.INFO)
 
 functionRepo()
 myFunctionRepo = functionRepo()
+table = resource.Table("githubCreateRepo")
 
 
 # Manage Approval
@@ -30,7 +30,6 @@ class manageApprove:
     # define attribs for all functions
     def __init__(self):
         self.table_name = "githubCreateRepo"
-        self.table = resource.Table(self.table_name)
 
     # check parameters
     def checkParam(self, param):
@@ -58,25 +57,34 @@ class manageApprove:
     # Query dynamodb to get information from it
     def getItemFromDynamodb(self,data):
         message = {}
-        table_data = requestor = ""
+        table_data = requestor = status = ""
+        test_check = 0
 
         # Using query With dynamoDB
-        response = self.table.query(KeyConditionExpression=Key('message_id').eq(data[0]))
+        response = table.query(KeyConditionExpression=Key('message_id').eq(data[0]))
         if response["Items"]:
             table_data = response['Items'][0]["data"]
             requestor = response['Items'][0]["slack_user"]
+            status = response['Items'][0]["message_status"]
+
+            # Check if approval status is on
+            if status == "approved":
+                message["status"] = "This request has already been approved"
+                test_check = 1
         else:
             message["status"] = "This message does not match with the one in the DB"
 
-        return requestor, table_data, message
+        return requestor, table_data, message, test_check
 
 
 def lambda_handler(event, context):
     status_code = 200
+    test_check = 0
     body = message = event_body = dev_input = {}
     myManageApprove = manageApprove()
     message["status"] = requestor = ""
     status_code, message, event_body = myFunctionRepo.checkBody(event)
+
     if event_body:
         command_text = event_body['text']
         callback_url = event_body["response_url"]
@@ -87,9 +95,10 @@ def lambda_handler(event, context):
         message, checkstatus, data = myManageApprove.checkParam(command_text)
 
         if checkstatus == 0:
-            requestor, dev_input, message = myManageApprove.getItemFromDynamodb(data)
+            requestor, dev_input, message, test_check = myManageApprove.getItemFromDynamodb(data)
 
-            if dev_input and requestor:
+            if dev_input and requestor and test_check == 0:
+
                 message["status"] = "The repository {} will be created soon".format(dev_input[0])
 
                 # Add all repository informations
@@ -113,8 +122,21 @@ def lambda_handler(event, context):
                     }
 
                     info_repo.update(ssh_info)
-                # Call Asynchronous function to create the repo
 
+                # Update status to Approved
+                response = table.update_item(
+                Key={
+                    'message_id': data[0]
+                },
+                UpdateExpression="set message_status = :r",
+                ExpressionAttributeValues={
+                    ':r': 'approved',
+                },
+                ReturnValues="UPDATED_NEW"
+                )
+
+
+                # Call Asynchronous function to create the repo
                 lam.invoke(
                     FunctionName='nwGitCreate',
                     InvocationType='Event',
