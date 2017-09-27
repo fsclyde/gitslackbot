@@ -59,7 +59,7 @@ class manageBot:
 
         if test == 0:
             if len(data) != 2:
-                message["status"] = "exactly 2 parameters are required (Those need to be separated by space): RepoName TeamName\nAvailable teams: `{}` \nExample: /gitrequestrepo nw-watchlist developer \n".format(config.GIT_TEAMS)
+                message["status"] = "exactly 2 parameters are required (Those need to be separated by space): RepoName TeamName\nAvailable teams: `{}` \nExample: /gitrequestrepo nw-watchlist tesla\n".format(config.GIT_TEAMS)
                 test = 1
 
         if test == 0:

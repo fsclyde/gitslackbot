@@ -49,7 +49,7 @@ class manageApprove:
 
         if test == 0:
             if len(data[0]) != 15:
-                message["status"] = "Wrong messaged_id provided"
+                message["status"] = "This message id is not valid: unvalid message size"
                 test = 1
 
         return message, test, data
@@ -72,7 +72,7 @@ class manageApprove:
                 message["status"] = "This request has already been approved"
                 test_check = 1
         else:
-            message["status"] = "This message does not match with the one in the DB"
+            message["status"] = "This message id is not valid: no record found "
 
         return requestor, table_data, message, test_check
 

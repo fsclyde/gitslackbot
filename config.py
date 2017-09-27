@@ -18,13 +18,12 @@ EXPECTED_TOKEN = kms.decrypt(CiphertextBlob=b64decode(os.environ["ENC_EXPECTED_T
 API_TOKEN = kms.decrypt(CiphertextBlob=b64decode(os.environ["API_TOKEN"]))['Plaintext']
 
 SLACK_APPROVAL = [{
-                    "title": "Approve a request using",
-                    "text": "/gitapprove [message_id] [teamSRead] [teamSWrite]"
+                    "title": "Approve a request using this cmd",
+                    "text": "/gitapprove [message_id] [teamSRead] [teamSWrite]\nExample: /gitapprove Erfjksfhsdfklj3 readonly tesla,ronin\n"
                 }]
 
 TABLE = "githubCreateRepo"
-# GIT_TEAMS = "tesla,ronin,defcon,bb-8,falcon,transformers,readonly"
-GIT_TEAMS = "developer,readonly,devops"
+GIT_TEAMS = "tesla,ronin,defcon,bb-8,falcon,transformers,readonly"
 # SLACK_APPROVAL = [{
 #                     "fallback": "You are unable to choose an answer",
 #                     "color": "#3AA3E3",
