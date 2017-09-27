@@ -32,7 +32,7 @@ class manageApprove:
         self.table_name = "githubCreateRepo"
 
     # check parameters
-    def checkParam(self, param, channel_name):
+    def checkParam(self, param, channel_id):
         message = {}
         test = 0
 
@@ -53,7 +53,7 @@ class manageApprove:
                 test = 1
 
         if test == 0:
-            if channel_name not in config.SLACK_CHANNEL:
+            if channel_id != config.SLACK_CHANNEL_ID:
                 message["status"] = "This can't be approved in this channel"
                 test = 1
 
@@ -95,9 +95,10 @@ def lambda_handler(event, context):
         callback_url = event_body["response_url"]
         approver = event_body["user_name"]
         channel_name = event_body["channel_name"]
+        channel_id = event_body["channel_id"]
 
         # Check the parameters
-        message, checkstatus, data = myManageApprove.checkParam(command_text, channel_name)
+        message, checkstatus, data = myManageApprove.checkParam(command_text, channel_id)
 
         if checkstatus == 0:
             requestor, dev_input, message, test_check = myManageApprove.getItemFromDynamodb(data)

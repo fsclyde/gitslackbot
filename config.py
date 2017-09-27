@@ -14,6 +14,7 @@ GITHUB_ORGANISATION = "sandbox"
 
 # Slack parameters
 SLACK_CHANNEL = "#githubot"
+SLACK_CHANNEL_ID = "G79GSAE4B" #githubot channel_id
 EXPECTED_TOKEN = kms.decrypt(CiphertextBlob=b64decode(os.environ["ENC_EXPECTED_TOKEN"]))['Plaintext']
 API_TOKEN = kms.decrypt(CiphertextBlob=b64decode(os.environ["API_TOKEN"]))['Plaintext']
 
