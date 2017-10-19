@@ -35,3 +35,7 @@ At least 6 parameters are required. Maximum 8 parameters.
 2) Here is the exemple for approving a creation of repository
 
     `/gitapprove [message_id] [repo_team_read] [repo_team_write] [ssh_key_title] [ssh_key]`
+
+### Diagram of gitslackbot
+
+![gitslackbot Diagram](https://github.com/fsclyde/gitslackbot/blob/master/gitslackbot.png "Diagram")
